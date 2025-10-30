@@ -15,7 +15,7 @@ Expected format:
 }
 
 Expected new data:
-{0} || {0, 0, NULL, ...}
+{0} || {NULL, 0, 0, ...}
 */
 
 static void *safeRealloc(void *ptr, int targ){
