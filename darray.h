@@ -1,10 +1,28 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "../rustydef.h"
+#ifndef RUSTYDEF_H_
+#define RUSTYDEF_H_
 
-#ifndef DARRAYH
-#define DARRAYH
+#include <stdint.h>
+
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+typedef intptr_t isz;
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef uintptr_t usz;
+typedef float f32;
+typedef double f64;
+
+#endif
+
+#ifndef DARRAY_H_
+#define DARRAY_H_
 
 /*
 Expected format:
@@ -20,10 +38,7 @@ Expected new data:
 
 static void *safeRealloc(void *ptr, int targ){
   retry: void *newPtr = realloc(ptr, targ);
-  if(!newPtr){
-    puts("Allocation error\nRetrying...");
-    goto retry;
-  }
+  if(!newPtr) goto retry;
   return newPtr;
 }
 
@@ -33,14 +48,13 @@ static void *safeRealloc(void *ptr, int targ){
 }
 
 #define darrayGrow(_da, _target) do{\
+  bool _changed = false;\
   if(!(_da).cap){\
     (_da).cap = 2ull;\
-    (_da).data = realloc((_da).data, sizeof(*(_da).data) * 2);\
-    break;\
+    _changed = true;\
   }\
-  bool _changed = false;\
-  while((da).cap < (_target)){\
-    (da).cap *= 2;\
+  while((_da).cap < (_target)){\
+    (_da).cap *= 2;\
     _changed =  true;\
   }\
   (_da).data = realloc((_da).data, sizeof(*(_da).data) * (_da).cap);\
@@ -56,7 +70,7 @@ void darray_grow(void *darrayGeneric, usz target, usz typeSize);
 void darray_shrink(void *darrayGenereric, usz typeSize);
 
 #define darrayAppend(_da, _el) do{\
-  darrayGrow(_da, (_da).size + 1)\
+  darrayGrow(_da, (_da).size + 1);\
   (_da).data[(_da).size] = (_el);\
   ++(_da).size;\
 } while(0)
@@ -113,6 +127,7 @@ void darray_recFree(void *darrayGeneric);
 
 #define darrayInterate(_da, _type)\
   for(usz _i = 0; _i < (_da).size; ++_i)\
-  for(_type _el = (_da).data[_i], *_once = NULL + 1; _once; _once = NULL)
+  for(_type _el = (_da).data[_i], *_once = NULL + 1; _once; _once = NULL)\
+  for(_type *_ref = (_da).data + _i, *_once = NULL + 1; _once; _once = NULL)\
 
 #endif
