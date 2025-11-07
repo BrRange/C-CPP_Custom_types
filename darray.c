@@ -35,7 +35,7 @@ void darray_appendPtr(void *darrayGeneric, void *element){
 void darray_appendMany(void *darrayGeneric, void *elementList, usz elementCount, usz typeSize){
   darrayTemplate(void) *darray = darrayGeneric;
   darray->size += elementCount;
-  darray_grow(darray, darray->size, typeSize);\
+  darray_grow(darray, darray->size, typeSize);
   u8 (*sized)[typeSize] = darray->data;
   memcpy(sized + darray->size - elementCount, elementList, elementCount * typeSize);
 }
@@ -47,7 +47,7 @@ void darray_remove(void *darrayGeneric, usz index, usz typeSize){
     memmove(
       sized + index,
       sized + index + 1,
-      (darray->size - index - 1) * typeSize\
+      (darray->size - index - 1) * typeSize
     );
   --darray->size;
 }
@@ -55,13 +55,13 @@ void darray_remove(void *darrayGeneric, usz index, usz typeSize){
 void darray_removeMany(void *darrayGeneric, usz index, usz amount, usz typeSize){
   darrayTemplate(void) *darray = darrayGeneric;
   u8 (*sized)[typeSize] = darray->data;
-  if(index < darray->size - amount)\
-    memmove(\
-      sized + index,\
-      sized + index + amount,\
-      (darray->size - index - amount) * typeSize\
-    );\
-  darray->size -= amount;\
+  if(index < darray->size - amount)
+    memmove(
+      sized + index,
+      sized + index + amount,
+      (darray->size - index - amount) * typeSize
+    );
+  darray->size -= amount;
 }
 
 void darray_destroy(void *darrayGeneric){
