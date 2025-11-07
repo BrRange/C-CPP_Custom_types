@@ -2,6 +2,7 @@
 #define RUSTYDEFH
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef int8_t i8;
 typedef int16_t i16;
@@ -15,5 +16,6 @@ typedef uint64_t u64;
 typedef uintptr_t usz;
 typedef float f32;
 typedef double f64;
+
 
 #endif
