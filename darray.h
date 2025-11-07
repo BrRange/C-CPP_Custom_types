@@ -1,34 +1,16 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#ifndef RUSTYDEF_H_
-#define RUSTYDEF_H_
-
-#include <stdint.h>
-
-typedef int8_t i8;
-typedef int16_t i16;
-typedef int32_t i32;
-typedef int64_t i64;
-typedef intptr_t isz;
-typedef uint8_t u8;
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef uint64_t u64;
-typedef uintptr_t usz;
-typedef float f32;
-typedef double f64;
-
-#endif
-
 #ifndef DARRAY_H_
 #define DARRAY_H_
+
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#include "rustydef.h"
 
 /*
 Expected format:
 {
     type *data;
-    u32 size, cap;
+    usz size, cap;
     ...
 }
 
@@ -125,7 +107,7 @@ void darray_destroy(void *darrayGeneric);
 
 void darray_recFree(void *darrayGeneric);
 
-#define darrayInterate(_da, _type)\
+#define darrayIterate(_da, _type)\
   for(usz _i = 0; _i < (_da).size; ++_i)\
   for(_type _el = (_da).data[_i], *_once = NULL + 1; _once; _once = NULL)\
   for(_type *_ref = (_da).data + _i, *_once = NULL + 1; _once; _once = NULL)\
