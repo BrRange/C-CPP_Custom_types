@@ -108,8 +108,8 @@ void darray_destroy(void *darrayAny);
 void darray_recFree(void *darrayAny);
 
 #define darrayIterate(_da, _type)\
-  for(usz _i = 0; _i < (_da).size; ++_i)\
-  for(_type _el = (_da).data[_i], *_once = NULL + 1; _once; _once = NULL)\
-  for(_type *_ref = (_da).data + _i, *_once = NULL + 1; _once; _once = NULL)\
+  for(_type *_ref = NULL; !_ref; _ref = NULL+1)\
+  for(_type _el; !_ref; _ref = NULL+1)\
+  for(usz _i = 0; (_ref = (_da).data + _i, _el = *_ref, _i < (_da).size); ++_i)
 
 #endif
