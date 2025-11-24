@@ -11,13 +11,13 @@ void darray_grow(void *darray, usz target, usz typeSize){
     darrayGen->cap *= 2;
     changed = true;
   }
-  if(changed) darrayGen->data = safeRealloc(darrayGen->data, darrayGen->cap * typeSize);
+  if(changed) darrayGen->data = REALLOC(darrayGen->data, darrayGen->cap * typeSize);
 }
 
 void darray_shrink(void *darray, usz typeSize){
   darrayTemplate(void) *darrayGen = darray;
   while(darrayGen->cap / 2 > darrayGen->size) darrayGen->cap /= 2;
-  darrayGen->data = safeRealloc(darrayGen->data, typeSize * darrayGen->cap);
+  darrayGen->data = REALLOC(darrayGen->data, typeSize * darrayGen->cap);
 }
 
 void darray_append(void *darray, void *element, usz typeSize){
