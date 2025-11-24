@@ -17,11 +17,9 @@ Expected new data:
 {0} || {NULL, 0, 0, ...}
 */
 
-static void *safeRealloc(void *ptr, int targ){
-  retry: void *newPtr = realloc(ptr, targ);
-  if(!newPtr) goto retry;
-  return newPtr;
-}
+#ifndef REALLOC
+#define REALLOC realloc
+#endif
 
 #define darrayTemplate(_type) struct{\
   _type *data;\
@@ -38,14 +36,14 @@ static void *safeRealloc(void *ptr, int targ){
     (_da).cap *= 2;\
     _changed =  true;\
   }\
-  (_da).data = realloc((_da).data, sizeof(*(_da).data) * (_da).cap);\
+  (_da).data = REALLOC((_da).data, sizeof(*(_da).data) * (_da).cap);\
 } while(0)
 
 void darray_grow(void *darrayAny, usz target, usz typeSize);
 
 #define darrayShrink(_da) do{\
   while(((_da).cap >> 1ull) > (_da).size) (_da).cap >>= 1ull;\
-  (_da).data = safeRealloc((_da).data, sizeof(*(_da).data) * (_da).cap);\
+  (_da).data = REALLOC((_da).data, sizeof(*(_da).data) * (_da).cap);\
 } while(0)
 
 void darray_shrink(void *darrayAny, usz typeSize);
@@ -112,4 +110,5 @@ void darray_recFree(void *darrayAny);
   for(usz _i = 0; (_ref = (_da).data + _i, _el = *_ref, _i < (_da).size); ++_i)
 
 #endif
+
 
