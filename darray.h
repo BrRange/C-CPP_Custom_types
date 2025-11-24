@@ -1,9 +1,8 @@
-#ifndef DARRAY_H_
-#define DARRAY_H_
+#ifndef DYNAMIC_ARRAY_H_
+#define DYNAMIC_ARRAY_H_
 
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 #include "rustydef.h"
 
 /*
@@ -113,3 +112,4 @@ void darray_recFree(void *darrayAny);
   for(usz _i = 0; (_ref = (_da).data + _i, _el = *_ref, _i < (_da).size); ++_i)
 
 #endif
+
