@@ -1,6 +1,9 @@
 #ifndef RUSTYDEFH
 #define RUSTYDEFH
 
+#define arrLen(_arr) (sizeof(_arr) / sizeof*(_arr))
+#define deref(_ptr, _type) (*(_type*)(_ptr))
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -16,6 +19,5 @@ typedef uint64_t u64;
 typedef uintptr_t usz;
 typedef float f32;
 typedef double f64;
-
 
 #endif
