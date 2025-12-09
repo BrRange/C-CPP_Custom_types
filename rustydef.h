@@ -1,7 +1,11 @@
 #ifndef RUSTYDEFH
 #define RUSTYDEFH
 
+#define arrLen(_arr) (sizeof(_arr) / sizeof*(_arr))
+#define deref(_ptr, _type) (*(_type*)(_ptr))
+
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef int8_t i8;
 typedef int16_t i16;
