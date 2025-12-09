@@ -110,5 +110,3 @@ void darray_recFree(void *darrayAny);
   for(usz _i = 0; (_ref = (_da).data + _i, _el = *_ref, _i < (_da).size); ++_i)
 
 #endif
-
-
