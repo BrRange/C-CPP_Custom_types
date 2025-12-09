@@ -2,12 +2,11 @@
 
 void darray_grow(void *darrayGeneric, usz target, usz typeSize){
   darrayTemplate(void) *darray = darrayGeneric;
+  bool changed = false;
   if(!darray->cap){
     darray->cap = 2;
-    darray->data = safeRealloc(darray->data, 2 * typeSize);
-    return;
+    changed = true;
   }
-  bool changed = false;
   while(darray->cap < target){
     darray->cap *= 2;
     changed = true;

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "../rustydef.h"
+#include "rustydef.h"
 
 #ifndef DARRAYH
 #define DARRAYH
@@ -21,7 +21,6 @@ Expected new data:
 static void *safeRealloc(void *ptr, int targ){
   retry: void *newPtr = realloc(ptr, targ);
   if(!newPtr){
-    puts("Allocation error\nRetrying...");
     goto retry;
   }
   return newPtr;
@@ -33,17 +32,16 @@ static void *safeRealloc(void *ptr, int targ){
 }
 
 #define darrayGrow(_da, _target) do{\
+  bool _changed = false;\
   if(!(_da).cap){\
     (_da).cap = 2ull;\
-    (_da).data = realloc((_da).data, sizeof(*(_da).data) * 2);\
-    break;\
+    _changed = true;\
   }\
-  bool _changed = false;\
   while((da).cap < (_target)){\
     (da).cap *= 2;\
     _changed =  true;\
   }\
-  (_da).data = realloc((_da).data, sizeof(*(_da).data) * (_da).cap);\
+  if(_changed) (_da).data = realloc((_da).data, sizeof(*(_da).data) * (_da).cap);\
 } while(0)
 
 void darray_grow(void *darrayGeneric, usz target, usz typeSize);
