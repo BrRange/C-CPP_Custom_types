@@ -17,10 +17,6 @@ Expected new data:
 {0} || {NULL, 0, 0, ...}
 */
 
-#ifndef REALLOC
-#define REALLOC realloc
-#endif
-
 #define darrayTemplate(_type) struct{\
   _type *data;\
   usz size, cap;\
@@ -36,14 +32,14 @@ Expected new data:
     (_da).cap *= 2;\
     _changed =  true;\
   }\
-  (_da).data = REALLOC((_da).data, sizeof(*(_da).data) * (_da).cap);\
+  (_da).data = realloc((_da).data, sizeof(*(_da).data) * (_da).cap);\
 } while(0)
 
 void darray_grow(void *darrayAny, usz target, usz typeSize);
 
 #define darrayShrink(_da) do{\
   while(((_da).cap >> 1ull) > (_da).size) (_da).cap >>= 1ull;\
-  (_da).data = REALLOC((_da).data, sizeof(*(_da).data) * (_da).cap);\
+  (_da).data = realloc((_da).data, sizeof(*(_da).data) * (_da).cap);\
 } while(0)
 
 void darray_shrink(void *darrayAny, usz typeSize);
@@ -67,28 +63,40 @@ void darray_appendPtr(void *darrayAny, void *element);
 void darray_appendMany(void *darrayAny, void *elementList, usz elementCount, usz typeSize);
 
 #define darrayRemove(_da, index) do{\
-  if(index < (_da).size - 1)\
+  --(_da).size;\
+  if(index < (_da).size)\
     memmove(\
       (_da).data + (index),\
       (_da).data + (index) + 1,\
-      ((_da).size - (index) - 1) * sizeof(*(_da).data)\
+      ((_da).size - (index)) * sizeof *(_da).data\
     );\
-  --(_da).size;\
 } while(0)
 
 void darray_remove(void *darrayAny, usz index, usz typeSize);
 
 #define darrayRemoveMany(_da, _index, _amount) do{\
-  if(_index < (_da).size - _amount)\
+  (_da).size -= (_amount);\
+  if(_index < (_da).size)\
     memmove(\
       (_da).data + (_index),\
       (_da).data + (_index) + (_amount),\
-      ((_da).size - (_index) - (_amount)) * sizeof(*(_da).data)\
+      ((_da).size - (_index)) * sizeof *(_da).data\
     );\
-  (_da).size -= (_amount);\
 } while(0)
 
 void darray_removeMany(void *darrayAny, usz index, usz amount, usz typeSize);
+
+#define darrayPop(_da, _index) do{\
+  --(_da).size;\
+  if(index < (_da).size)\
+    memcpy(\
+      (_da).data + (index),\
+      (_da).data + (_da).size,\
+      sizeof *(_da).data\
+    );\
+} while(0)
+
+void darray_pop(void *darrayAny, usz index, usz typeSize);
 
 #define darrayDestroy(_da) do{\
   free((_da).data);\
@@ -104,9 +112,9 @@ void darray_destroy(void *darrayAny);
 
 void darray_recFree(void *darrayAny);
 
-#define darrayIterate(_da, _type)\
-  for(_type *_ref = NULL; !_ref; _ref = NULL+1)\
-  for(_type _el; !_ref; _ref = NULL+1)\
+#define darrayIterate(_da)\
+  for(typeof((_da).data)_ref = NULL; !_ref; _ref = NULL+1)\
+  for(typeof(*(_da).data)_el; !_ref; _ref = NULL+1)\
   for(usz _i = 0; (_ref = (_da).data + _i, _el = *_ref, _i < (_da).size); ++_i)
 
 #endif

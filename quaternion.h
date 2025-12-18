@@ -6,7 +6,7 @@
 union Quaternion{
   float coord[4];
   struct{
-      float r, x, y, z;
+    float r, x, y, z;
   };
 };
 typedef union Quaternion Quaternion;
@@ -20,7 +20,7 @@ union Point3{
 typedef union Point3 Point3;
 
 Point3 point3Normal(float x, float y, float z){
-  float scale = sqrtf(x * x + y * y + z * z);
+  float scale = hypotf(x, hypotf(y, z));
   return (Point3){x / scale, y / scale, z / scale};
 }
 
