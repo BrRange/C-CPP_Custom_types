@@ -77,6 +77,19 @@ void darray_pop(void *darrayAny, usz index, usz typeSize){
     );
 }
 
+void darray_popMany(void *darrayAny, usz index, usz amount, usz typeSize){
+  darrayTemplate(void) *darray = darrayAny;
+  u8 (*sized)[typeSize] = darray->data;
+  darray->size -= amount;
+  usz diff = amount + index > darray->size ? amount + index - darray->size : 0;
+  if(index < darray->size)
+    memcpy(
+      sized + index,
+      sized + darray->size + diff,
+      (amount - diff) * typeSize
+    );
+}
+
 void darray_destroy(void *darrayAny){
   darrayTemplate(void) *darray = darrayAny;
   free(darray->data);

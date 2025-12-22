@@ -45,7 +45,7 @@ void darray_grow(void *darrayAny, usz target, usz typeSize);
 void darray_shrink(void *darrayAny, usz typeSize);
 
 #define darrayAppend(_da, _el) do{\
-  darrayGrow(_da, (_da).size + 1);\
+  darrayGrow((_da), (_da).size + 1);\
   (_da).data[(_da).size] = (_el);\
   ++(_da).size;\
 } while(0)
@@ -56,19 +56,19 @@ void darray_appendPtr(void *darrayAny, void *element);
 
 #define darrayAppendMany(_da, _li, _n) do{\
   (_da).size += (_n);\
-  darrayGrow(_da, (_da).size);\
-  memcpy((_da).data + (_da).size - _n, _li, _n * sizeof(*(_da).data));\
+  darrayGrow((_da), (_da).size);\
+  memcpy((_da).data + (_da).size - (_n), (_li), (_n) * sizeof(*(_da).data));\
 } while(0)
 
 void darray_appendMany(void *darrayAny, void *elementList, usz elementCount, usz typeSize);
 
-#define darrayRemove(_da, index) do{\
+#define darrayRemove(_da, _index) do{\
   --(_da).size;\
-  if(index < (_da).size)\
+  if((_index) < (_da).size)\
     memmove(\
-      (_da).data + (index),\
-      (_da).data + (index) + 1,\
-      ((_da).size - (index)) * sizeof *(_da).data\
+      (_da).data + (_index),\
+      (_da).data + (_index) + 1,\
+      ((_da).size - (_index)) * sizeof *(_da).data\
     );\
 } while(0)
 
@@ -90,13 +90,27 @@ void darray_removeMany(void *darrayAny, usz index, usz amount, usz typeSize);
   --(_da).size;\
   if(index < (_da).size)\
     memcpy(\
-      (_da).data + (index),\
+      (_da).data + (_index),\
       (_da).data + (_da).size,\
       sizeof *(_da).data\
     );\
 } while(0)
 
 void darray_pop(void *darrayAny, usz index, usz typeSize);
+
+#define darrayPopMany(_da, _index, _amount) do{\
+  (_da).size -= (_amount);\
+  usz _diff = (_amount) + (_index) > (_da).size ? (_amount) + (_index) - (_da).size : 0;\
+  printf("Diff: %zu\n", _diff);\
+  if((_index) < (_da).size)\
+    memcpy(\
+      (_da).data + (_index),\
+      (_da).data + (_da).size + _diff,\
+      ((_amount) - _diff) * sizeof *(_da).data\
+    );\
+} while(0)
+
+void darray_popMany(void *darrayAny, usz index, usz amount, usz typeSize);
 
 #define darrayDestroy(_da) do{\
   free((_da).data);\
