@@ -1,27 +1,30 @@
 #include "darray.h"
 
-void darray_grow(void *darrayAny, usz target, usz typeSize){
+void darray_grow(void *darrayAny, u32 target, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
-  bool changed = false;
-  if(!darray->cap){
-    darray->cap = 2;
-    changed = true;
+  u32 cap = darray->cap;
+  cap += 2 * !cap;
+  while(cap < target){
+    u32 incr = cap >> 1;
+    cap += incr + (incr & 1);
   }
-  while(darray->cap < target){
-    usz incr = darray->cap >> 1;
-    darray->cap += incr + (incr & 1);
-    changed = true;
+  if(cap > darray->cap){
+    darray->cap = cap;
+    darray->data = REALLOC(darray->data, cap * typeSize);
   }
-  if(changed) darray->data = realloc(darray->data, darray->cap * typeSize);
 }
 
-void darray_shrink(void *darrayAny, usz typeSize){
+void darray_shrink(void *darrayAny, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
-  while(darray->cap / 2 > darray->size) darray->cap /= 2;
-  darray->data = realloc(darray->data, typeSize * darray->cap);
+  u32 cap = darray->cap;
+  while(cap / 2 > darray->size) cap /= 2;
+  if(cap < darray->cap){
+    darray->cap = cap;
+    darray->data = REALLOC(darray->data, cap * typeSize);
+  }
 }
 
-void darray_append(void *darrayAny, void *element, usz typeSize){
+void darray_append(void *darrayAny, void *element, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
   darray_grow(darrayAny, darray->size + 1, typeSize);
   u8 (*sized)[typeSize] = darray->data;
@@ -33,7 +36,7 @@ void darray_appendPtr(void *darrayAny, void *element){
   darray_append(darrayAny, &element, sizeof element);
 }
 
-void darray_appendMany(void *darrayAny, void *elementList, usz elementCount, usz typeSize){
+void darray_appendMany(void *darrayAny, void *elementList, u32 elementCount, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
   darray->size += elementCount;
   darray_grow(darray, darray->size, typeSize);
@@ -41,7 +44,7 @@ void darray_appendMany(void *darrayAny, void *elementList, usz elementCount, usz
   memcpy(sized + darray->size - elementCount, elementList, elementCount * typeSize);
 }
 
-void darray_remove(void *darrayAny, usz index, usz typeSize){
+void darray_remove(void *darrayAny, u32 index, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
   u8 (*sized)[typeSize] = darray->data;
   --darray->size;
@@ -53,7 +56,7 @@ void darray_remove(void *darrayAny, usz index, usz typeSize){
     );
 }
 
-void darray_removeMany(void *darrayAny, usz index, usz amount, usz typeSize){
+void darray_removeMany(void *darrayAny, u32 index, u32 amount, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
   u8 (*sized)[typeSize] = darray->data;
   darray->size -= amount;
@@ -65,7 +68,7 @@ void darray_removeMany(void *darrayAny, usz index, usz amount, usz typeSize){
     );
 }
 
-void darray_pop(void *darrayAny, usz index, usz typeSize){
+void darray_pop(void *darrayAny, u32 index, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
   u8 (*sized)[typeSize] = darray->data;
   --darray->size;
@@ -77,11 +80,11 @@ void darray_pop(void *darrayAny, usz index, usz typeSize){
     );
 }
 
-void darray_popMany(void *darrayAny, usz index, usz amount, usz typeSize){
+void darray_popMany(void *darrayAny, u32 index, u32 amount, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
   u8 (*sized)[typeSize] = darray->data;
   darray->size -= amount;
-  usz diff = amount + index > darray->size ? amount + index - darray->size : 0;
+  u32 diff = amount + index > darray->size ? amount + index - darray->size : 0;
   if(index < darray->size)
     memcpy(
       sized + index,
@@ -98,6 +101,6 @@ void darray_destroy(void *darrayAny){
 
 void darray_recFree(void *darrayAny){
   darrayTemplate(void*) *darrayGenPtr = darrayAny;
-  for(usz i = 0; i < darrayGenPtr->size; ++i)
+  for(u32 i = 0; i < darrayGenPtr->size; ++i)
     free(darrayGenPtr->data[i]);
 }
