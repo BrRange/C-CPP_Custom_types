@@ -22,7 +22,7 @@ Expected new data:
 */
 
 #define darrayTemplate(_type) struct{\
-  _type (*data);\
+  typeof(_type)(*data);\
   u32 size, cap;\
 }
 
@@ -139,3 +139,4 @@ void darray_recFree(void *darrayAny);
 
 
 #endif
+
