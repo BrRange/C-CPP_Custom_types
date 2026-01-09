@@ -2,7 +2,7 @@
 #define DYNAMIC_ARRAY_H_
 
 #include <stdlib.h>
-#include <string.h>
+#include <memory.h>
 #include "rustydef.h"
 
 #ifndef REALLOC
@@ -136,5 +136,6 @@ void darray_recFree(void *darrayAny);
   for(typeof((_da).data)_ref = NULL; !_ref; _ref = NULL+1)\
   for(typeof(*(_da).data)_el; !_ref; _ref = NULL+1)\
   for(u32 _i = 0; (_ref = (_da).data + _i, _el = *_ref, _i < (_da).size); ++_i)
+
 
 #endif
