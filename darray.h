@@ -21,8 +21,8 @@ Expected new data:
 {0} || {NULL, 0, 0, ...}
 */
 
-#define darrayTemplate(_type) struct{\
-  typeof(_type)(*data);\
+#define darrayTemplate(_type...) struct{\
+  pointer(_type) data;\
   u32 size, cap;\
 }
 

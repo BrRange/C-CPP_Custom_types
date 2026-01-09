@@ -3,6 +3,7 @@
 
 #define arrLen(_arr) (sizeof(_arr) / sizeof*(_arr))
 #define deref(_ptr, _type) (*(_type*)(_ptr))
+#define pointer(_type...) typeof(_type)*
 
 #include <stdint.h>
 #include <stdbool.h>
