@@ -47,7 +47,7 @@ u32 string_contains(StringView view, StringView sub);
 /**
  * @brief Splits a string into a string dynamic array based on a delimiter
  * @param view String to be split
- * @param delimiter Delimiter used to slip the source string
+ * @param delimiter Delimiter used to split the source string
  * @param darray_string Expected to point at a valid darray of String
  */
 void string_split(StringView view, StringView delimiter, void *darray_string);
@@ -61,5 +61,6 @@ String string_joinView(StringView *list, u32 len, StringView join);
  * @return Sign of (base.len - target.len). If there isn't, returns the ascii comparison
  */
 i32 string_compare(StringView base, StringView target);
+
 
 #endif
