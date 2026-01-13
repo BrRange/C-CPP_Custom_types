@@ -45,12 +45,20 @@ u32 string_findLast(StringView view, char c);
 u32 string_contains(StringView view, StringView sub);
 
 /**
- * @brief Splits a string into a string dynamic array based on a delimiter
+ * @brief Splits a string into a dynamic array based on a delimiter
  * @param view String to be split
  * @param delimiter Delimiter used to split the source string
- * @param darray_string Expected to point at a valid darray of String
+ * @param darray_String Expected to point at a valid darray of String
  */
-void string_split(StringView view, StringView delimiter, void *darray_string);
+void string_split(StringView view, StringView delimiter, void *darray_String);
+
+/**
+ * @brief Splits a string into a dynamic array based on a delimiter
+ * @param view String to be split
+ * @param delimiter Delimiter used to split the source string
+ * @param darray_StringView Expected to point at a valid darray of StringView
+ */
+void string_splitView(StringView view, StringView delimiter, void *darray_StringView);
 
 String string_join(String *list, u32 len, StringView join);
 
@@ -61,6 +69,5 @@ String string_joinView(StringView *list, u32 len, StringView join);
  * @return Sign of (base.len - target.len). If there isn't, returns the ascii comparison
  */
 i32 string_compare(StringView base, StringView target);
-
 
 #endif

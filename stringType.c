@@ -90,8 +90,8 @@ u32 string_contains(StringView view, StringView sub){
   return -1u;
 }
 
-void string_split(StringView view, StringView delimiter, void *darray_string){
-  darrayTemplate(String) *darray = darray_string;
+void string_split(StringView view, StringView delimiter, void *darray_String){
+  darrayTemplate(String) *darray = darray_String;
   u32 index = string_contains(view, delimiter);
   while(index + 1){
     String newEl = string_new(string_newView(view.data, index));
@@ -103,12 +103,39 @@ void string_split(StringView view, StringView delimiter, void *darray_string){
   darrayAppend(*darray, string_new(view));
 }
 
+void string_splitView(StringView view, StringView delimiter, void *darray_StringView){
+  darrayTemplate(StringView) *darray = darray_StringView;
+  u32 index = string_contains(view, delimiter);
+  while(index + 1){
+    StringView newEl = string_newView(view.data, index);
+    darrayAppend(*darray, newEl);
+    view.data += index + delimiter.len;
+    view.len -= index + delimiter.len;
+    index = string_contains(view, delimiter);
+  }
+  darrayAppend(*darray, view);
+}
+
 String string_join(String *list, u32 len, StringView join){
-  asm("ud2");
+  String joined = {0};
+  if(!len) return joined;
+  for(u32 i = 0; i < len - 1; ++i){
+    darrayAppendMany(joined, list[i].data, list[i].len);
+    darrayAppendMany(joined, join.data, join.len);
+  }
+  darrayAppendMany(joined, list[len - 1].data, list[len - 1].len);
+  return joined;
 }
 
 String string_joinView(StringView *list, u32 len, StringView join){
-  asm("ud2");
+  String joined = {0};
+  if(!len) return joined;
+  for(u32 i = 0; i < len - 1; ++i){
+    darrayAppendMany(joined, list[i].data, list[i].len);
+    darrayAppendMany(joined, join.data, join.len);
+  }
+  darrayAppendMany(joined, list[len - 1].data, list[len - 1].len);
+  return joined;
 }
 
 i32 string_compare(StringView base, StringView target){
