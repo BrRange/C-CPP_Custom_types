@@ -12,9 +12,9 @@
 /*
 Expected format:
 {
-    type *data;
-    u32 size, cap;
-    ...
+  type *data;
+  u32 size, cap;
+  ...
 }
 
 Expected new data:
@@ -139,4 +139,3 @@ void darray_recFree(void *darrayAny);
 
 
 #endif
-
