@@ -1,5 +1,5 @@
-#ifndef RUSTYDEFH
-#define RUSTYDEFH
+#ifndef RUSTYDEF_H_
+#define RUSTYDEF_H_
 
 #define arrLen(_arr) (sizeof(_arr) / sizeof*(_arr))
 #define deref(_ptr, _type) (*(_type*)(_ptr))
@@ -31,3 +31,4 @@ typedef double f64;
 
 
 #endif
+
