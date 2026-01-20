@@ -2,11 +2,10 @@
 
 #include <assert.h>
 #include <stdarg.h>
+#include <memory.h>
 
 void matNullify(Mat mat){
-  u32 ite = mat.r * mat.c;
-  for(u32 i = 0; i < ite; ++i)
-    mat.data[i] = 0.f;
+  memset(mat.data, 0, 4ull * mat.r * mat.c);
 }
 
 void matDot(Mat fun, Mat arg, Mat out){

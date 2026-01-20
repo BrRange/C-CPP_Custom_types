@@ -2,7 +2,7 @@
 #define DYNAMIC_ARRAY_H_
 
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 #include "rustydef.h"
 
 #ifndef REALLOC

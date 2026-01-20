@@ -8,10 +8,10 @@
  * All memory allocation is done externally
  */
 
-#define Matrix_expr(_mat, _expr_ij...)          \
+#define Matrix_expr(_mat, _expr_ij...)     \
   for (unsigned i = 0; i < (_mat).r; i++)  \
   for (unsigned j = 0; j < (_mat).c; j++)  \
-  (_mat).data[i * (_mat).c + j] = (_expr_ij)      //
+  (_mat).data[i * (_mat).c + j] = (_expr_ij)
 
 struct Mat {
   unsigned r, c;
