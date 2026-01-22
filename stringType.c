@@ -3,7 +3,7 @@
 #include <string.h>
 #include "darray.h"
 
-String string_new(StringView view){
+String string_new(const StringView view){
   String str = {0};
   darrayAppendMany(str, view.data, view.len);
   return str;
@@ -35,18 +35,23 @@ void string_destroy(String *str){
   *str = (String){0};
 }
 
-void string_append(String *str, StringView view){
+void string_set(String *str, const StringView view){
+  str->size = 0;
   darrayAppendMany(*str, view.data, view.len);
 }
 
-u32 string_findAmount(StringView view, char c){
+void string_append(String *str, const StringView view){
+  darrayAppendMany(*str, view.data, view.len);
+}
+
+u32 string_findAmount(const StringView view, char c){
   u32 amount = 0;
   for(u32 i = 0; i < view.len; ++i)
     if(view.data[i] == c) ++amount;
   return amount;
 }
 
-u32 *string_findAll(StringView view, char c, u32 *amount){
+u32 *string_findAll(const StringView view, char c, u32 *amount){
   u32 found = string_findAmount(view, c), cur = 0;
   u32 *list = malloc(found * sizeof *list);
   for(u32 i = 0; cur < found; ++i)
@@ -55,7 +60,7 @@ u32 *string_findAll(StringView view, char c, u32 *amount){
   return list;
 }
 
-void string_findDynamic(StringView view, char c, void *darray_u32){
+void string_findDynamic(const StringView view, char c, void *darray_u32){
   darrayTemplate(u32) *darray = darray_u32;
   u32 found = string_findAmount(view, c), cur = 0;
   darrayGrow(*darray, darray->size + found);
@@ -66,19 +71,19 @@ void string_findDynamic(StringView view, char c, void *darray_u32){
     }
 }
 
-u32 string_findFirst(StringView view, char c){
+u32 string_findFirst(const StringView view, char c){
   char *sub = memchr(view.data, c, view.len);
   if(sub) return sub - view.data;
   return -1u;
 }
 
-u32 string_findLast(StringView view, char c){
+u32 string_findLast(const StringView view, char c){
   for(u32 i = view.len - 1; i < view.len; --i)
     if(view.data[i] == c) return i;
   return -1u;
 }
 
-u32 string_contains(StringView view, StringView sub){
+u32 string_contains(const StringView view, const StringView sub){
   if(view.len < sub.len) return -1u;
   u32 cur = 0;
   while(view.len - cur >= sub.len){
@@ -90,7 +95,7 @@ u32 string_contains(StringView view, StringView sub){
   return -1u;
 }
 
-void string_split(StringView view, StringView delimiter, void *darray_String){
+void string_split(StringView view, const StringView delimiter, void *darray_String){
   darrayTemplate(String) *darray = darray_String;
   u32 index = string_contains(view, delimiter);
   while(index + 1){
@@ -103,7 +108,7 @@ void string_split(StringView view, StringView delimiter, void *darray_String){
   darrayAppend(*darray, string_new(view));
 }
 
-void string_splitView(StringView view, StringView delimiter, void *darray_StringView){
+void string_splitView(StringView view, const StringView delimiter, void *darray_StringView){
   darrayTemplate(StringView) *darray = darray_StringView;
   u32 index = string_contains(view, delimiter);
   while(index + 1){
@@ -116,7 +121,7 @@ void string_splitView(StringView view, StringView delimiter, void *darray_String
   darrayAppend(*darray, view);
 }
 
-String string_join(String *list, u32 len, StringView join){
+String string_join(String *list, u32 len, const StringView join){
   String joined = {0};
   if(!len) return joined;
   for(u32 i = 0; i < len - 1; ++i){
@@ -127,7 +132,7 @@ String string_join(String *list, u32 len, StringView join){
   return joined;
 }
 
-String string_joinView(StringView *list, u32 len, StringView join){
+String string_joinView(StringView *list, u32 len, const StringView join){
   String joined = {0};
   if(!len) return joined;
   for(u32 i = 0; i < len - 1; ++i){
@@ -138,7 +143,7 @@ String string_joinView(StringView *list, u32 len, StringView join){
   return joined;
 }
 
-i32 string_compare(StringView base, StringView target){
+i32 string_compare(const StringView base, const StringView target){
   if(base.len != target.len) return (base.len > target.len) - (base.len < target.len);
   return memcmp(base.data, target.data, base.len);
 }

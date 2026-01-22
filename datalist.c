@@ -184,7 +184,6 @@ void dlist_push(DList *restrict dl, void *data){
 }
 
 void dlist_pop(DList *restrict dl, DNode *node){
-  DNode *temp;
   if(dl->root == node){
     node = dl->root->next;
     free(dl->root);
@@ -200,8 +199,10 @@ void dlist_pop(DList *restrict dl, DNode *node){
 DNode *dlist_find(DList *restrict dl, void *data, ListCompare cmp){
   DNode *node = dl->root;
   if(!node) return NULL;
-  do if(cmp(data, node->data)) return node;
-  while(node = node->next);
+  do{
+    if(cmp(data, node->data)) return node;
+    node = node->next;
+  } while(node->next);
   return NULL;
 }
 

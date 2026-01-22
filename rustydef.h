@@ -1,17 +1,10 @@
-#ifndef RUSTYDEF_H_
-#define RUSTYDEF_H_
+#ifndef RUSTY_DEFINITION_
+#define RUSTY_DEFINITION_
 
 #define arrLen(_arr) (sizeof(_arr) / sizeof*(_arr))
 #define deref(_ptr, _type) (*(_type*)(_ptr))
-
-#ifdef __GNUC__
-
 #define pointer(_type...) typeof(typeof(_type)*)
-#define lambda(_ret, _fn...) __extension__({_ret _lambda _fn; _lambda;})
 #define defer(_freeFn) __attribute__((cleanup(_freeFn)))
-#define ifchance(_chance, _cond...) if(__builtin_expect_with_probability(!!(_cond), 1, _chance))
-
-#endif
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -31,4 +24,3 @@ typedef double f64;
 
 
 #endif
-
