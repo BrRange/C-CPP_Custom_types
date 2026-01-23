@@ -14,10 +14,10 @@ string_new:
 
   mov ecx, 8[rdx]
   mov 8[rbx], ecx
-  lea ecx, 7[ecx]
+  lea ecx, 7[rcx]
   and ecx, -8
   mov 12[rbx], ecx
-  jz .string_new_return
+  jz .string_new.return
 
   lea rsp, -32[rsp]
   call malloc
@@ -32,7 +32,7 @@ string_new:
   pop rbx
   jmp memcpy
 
-.string_new_return:
+.string_new.return:
   mov [rbx], rcx
   pop rbp
   pop rbx
@@ -48,15 +48,15 @@ string_view:
 
 .global string_set
 string_set:
-  xor eax, eax
-  mov 8[rcx], eax
+  xor r8d, r8d
+  mov 8[rcx], r8d
 
 .global string_append
 string_append:
   mov rax, rdx
   mov edx, 8[rdx]
   test edx, edx
-  jz .string_append_return
+  jz .string_append.return
 
   push rbx
   push rbp
@@ -66,10 +66,10 @@ string_append:
   push 8[rbx]
   add edx, 8[rbx]
   mov 8[rbx], edx
-  lea edx, 7[edx]
+  lea edx, 7[rdx]
   and edx, -8
   cmp 12[rbx], edx
-  jnc .string_append_enoughCap
+  jnc .string_append.enoughCap
 
   lea rsp, -32[rsp]
   mov rcx, [rbx]
@@ -78,7 +78,7 @@ string_append:
   mov [rbx], rax
   lea rsp, 32[rsp]
 
-.string_append_enoughCap:
+.string_append.enoughCap:
   pop rcx
   mov ecx, ecx
   add rcx, [rbx]
@@ -88,5 +88,5 @@ string_append:
   pop rbx
   jmp memcpy
   
-.string_append_return:
+.string_append.return:
   ret
