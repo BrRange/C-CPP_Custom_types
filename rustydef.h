@@ -22,5 +22,4 @@ typedef uintptr_t usz;
 typedef float f32;
 typedef double f64;
 
-
 #endif
