@@ -84,14 +84,17 @@ darray_append:
 
 .global darray_appendPtr
 darray_appendPtr:
+  push rbx
   push rdx
   mov edx, 8[rcx]
   lea edx, 1[rdx]
+  lea rbx, [rdx*8]
   mov 8[rcx], edx
   call darray_grow
-  pop rdx
   lea rcx, [rax+rbx]
   mov r8d, 8
+  pop rdx
+  pop rbx
   jmp memcpy
 
 .global darray_appendMany
@@ -167,20 +170,25 @@ darray_pop:
 
 .global darray_popMany
 darray_popMany:
-  lea rcx, .unimpl_string[rip]
-  call printf
-  ud2
   mov eax, 8[rcx]
   sub eax, r8d
   mov 8[rcx], eax
   cmp edx, eax
   jnc .darray_popMany.noLeftover
+  push rbx
+  lea ebx, [rdx+r8]
+  xor r10d, r10d
+  sub ebx, eax
+  cmovc ebx, r10d
   mov rcx, [rcx]
   imul rdx, r9
+  lea eax, [rax+rbx]
   imul rax, r9
   lea rax, [rcx+rax]
   lea rcx, [rcx+rdx]
   mov rdx, rax
+  pop rbx
+  imul r8, r9
   jmp memcpy
   .darray_popMany.noLeftover:
   ret
@@ -192,7 +200,3 @@ darray_destroy:
   mov rcx, [rcx]
   movups [rax], xmm0
   jmp free
-
-.unimpl_string:
-  .ascii "Not implemented"
-  .byte 10, 0
