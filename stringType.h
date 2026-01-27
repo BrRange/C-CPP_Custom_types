@@ -7,8 +7,7 @@
 
 typedef struct String{
   char *data;
-  union{u32 size, len;};
-  u32 cap;
+  u32 len, cap;
 } String;
 
 typedef struct StringView{

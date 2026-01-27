@@ -36,7 +36,7 @@ void string_destroy(String *str){
 }
 
 void string_set(String *str, const StringView view){
-  str->size = 0;
+  str->len = 0;
   darrayAppendMany(*str, view.data, view.len);
 }
 
@@ -63,7 +63,7 @@ u32 *string_findAll(const StringView view, char c, u32 *amount){
 void string_findDynamic(const StringView view, char c, void *darray_u32){
   darrayTemplate(u32) *darray = darray_u32;
   u32 found = string_findAmount(view, c), cur = 0;
-  darrayGrow(*darray, darray->size + found);
+  darrayGrow(*darray, darray->len + found);
   for(u32 i = 0; cur < found; ++i)
     if(view.data[i] == c){
       darrayAppend(*darray, i);
