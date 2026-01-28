@@ -5,9 +5,7 @@
 #include <string.h>
 #include "rustydef.h"
 
-#ifndef REALLOC
-#define REALLOC realloc
-#endif
+extern void *(*darrayRealloc)(void *mem, usz bytes);
 
 /*
 Expected format:

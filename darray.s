@@ -1,5 +1,7 @@
 .intel_syntax noprefix
 
+.text
+
 .global darray_grow
 darray_grow:
   push rbx
@@ -10,24 +12,27 @@ darray_grow:
   mov rax, [rbx]
   pop rbx
   ret
-.darray_grow.notEnough:
+  .darray_grow.notEnough:
   xor eax, eax
   test ecx, ecx
   setz al
   lea ecx, [rcx+rax*2]
-.darray_grow.growthFactor:
+  cmp ecx, edx
+  jnc .darray_grow.firstGrowPass
+  .darray_grow.growthFactor:
   mov eax, ecx
   shr eax
   lea ecx, 1[rcx+rax]
   and ecx, -2
   cmp ecx, edx
   jc .darray_grow.growthFactor
+  .darray_grow.firstGrowPass:
   sub rsp, 32
   mov edx, r8d
   mov 12[rbx], ecx
   imul rdx, rcx
   mov rcx, [rbx]
-  call realloc
+  call darrayRealloc[rip]
   mov [rbx], rax
   add rsp, 32
   pop rbx
@@ -58,7 +63,7 @@ darray_shrink:
   imul rdx, rax
   mov rcx, [rbx]
   sub rsp, 32
-  call realloc
+  call darrayRealloc[rip]
   mov [rbx], rax
   add rsp, 32
   pop rbx
@@ -220,3 +225,9 @@ darray_destroy:
   mov rcx, [rcx]
   movups [rax], xmm0
   jmp free
+
+.data
+
+.global darrayRealloc
+darrayRealloc:
+  .quad realloc
