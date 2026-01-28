@@ -84,20 +84,15 @@ darray_append:
 
 .global darray_appendPtr
 darray_appendPtr:
-  sub rsp, 16
-  mov 32[rsp], rdx
-  mov edx, 8[rcx]
-  mov 40[rsp], edx
-  add edx, 1
+  push rbx
+  push rdx
+  mov ebx, 8[rcx]
+  lea edx, 1[rbx]
   mov 8[rcx], edx
   mov r8d, 8
   call darray_grow
-  mov edx, 40[rsp]
-  lea rcx, [rax+rdx*8]
-  lea rdx, 32[rsp]
-  mov r8d, 8
-  call memcpy
-  add rsp, 16
+  pop [rax+rbx*8]
+  pop rbx
   ret
 
 .global darray_appendMany
