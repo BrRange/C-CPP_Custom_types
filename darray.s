@@ -22,14 +22,14 @@ darray_grow:
   and ecx, -2
   cmp ecx, edx
   jc .darray_grow.growthFactor
-  lea rsp, -32[rsp]
+  sub rsp, 32
   mov edx, r8d
   mov 12[rbx], ecx
   imul rdx, rcx
   mov rcx, [rbx]
   call realloc
   mov [rbx], rax
-  lea rsp, 32[rsp]
+  add rsp, 32
   pop rbx
   ret
 
@@ -50,17 +50,17 @@ darray_shrink:
   ret
   .darray_shrink.canShrink:
   shr eax
-  lea eax, 1[eax]
+  add eax, 1
   and eax, -2
   cmp eax, ecx
   jnc .darray_shrink.canShrink
   mov 12[rbx], eax
   imul rdx, rax
   mov rcx, [rbx]
-  lea rsp, -32[rsp]
+  sub rsp, 32
   call realloc
   mov [rbx], rax
-  lea rsp, 32[rsp]
+  add rsp, 32
   pop rbx
   ret
 
@@ -72,7 +72,7 @@ darray_append:
   mov edx, 8[rcx]
   mov eax, r8d
   imul rax, rdx
-  lea edx, 1[rdx]
+  add edx, 1
   mov 8[rcx], edx
   mov rbx, rax
   call darray_grow
@@ -84,18 +84,21 @@ darray_append:
 
 .global darray_appendPtr
 darray_appendPtr:
-  push rbx
-  push rdx
+  sub rsp, 16
+  mov 32[rsp], rdx
   mov edx, 8[rcx]
-  lea edx, 1[rdx]
-  lea rbx, [rdx*8]
+  mov 40[rsp], edx
+  add edx, 1
   mov 8[rcx], edx
-  call darray_grow
-  lea rcx, [rax+rbx]
   mov r8d, 8
-  pop rdx
-  pop rbx
-  jmp memcpy
+  call darray_grow
+  mov edx, 40[rsp]
+  lea rcx, [rax+rdx*8]
+  lea rdx, 32[rsp]
+  mov r8d, 8
+  call memcpy
+  add rsp, 16
+  ret
 
 .global darray_appendMany
 darray_appendMany:
@@ -119,7 +122,7 @@ darray_appendMany:
 .global darray_remove
 darray_remove:
   mov eax, 8[rcx]
-  lea eax, -1[rax]
+  sub eax, 1
   mov 8[rcx], eax
   cmp edx, eax
   jnc .darray_remove.noLeftover
@@ -154,7 +157,7 @@ darray_removeMany:
 .global darray_pop
 darray_pop:
   mov eax, 8[rcx]
-  lea eax, -1[rax]
+  sub eax, 1
   mov 8[rcx], eax
   cmp edx, eax
   jnc .darray_pop.noLeftover
@@ -191,6 +194,28 @@ darray_popMany:
   imul r8, r9
   jmp memcpy
   .darray_popMany.noLeftover:
+  ret
+
+.global darray_recFree
+darray_recFree:
+  mov edx, 8[rcx]
+  test edx, edx
+  jz .darray_recFree.noLen
+  push rbx
+  push rbp
+  sub rsp, 32
+  mov ebx, edx
+  mov rbp, [rcx]
+  .darray_recFree.iterate:
+  sub ebx, 1
+  mov rcx, [rbp+rbx*8]
+  call free
+  test ebx, ebx
+  jnz .darray_recFree.iterate
+  add rsp, 32
+  pop rbp
+  pop rbx
+  .darray_recFree.noLen:
   ret
 
 .global darray_destroy
