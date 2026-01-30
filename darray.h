@@ -31,7 +31,7 @@ Expected new data:
     _cap += (_cap >> 1) + ((_cap >> 1) & 1);\
   if(_cap > (_da).cap){\
     (_da).cap = _cap;\
-    (_da).data = REALLOC((_da).data, _cap * sizeof *(_da).data);\
+    (_da).data = darrayRealloc((_da).data, _cap * sizeof *(_da).data);\
   }\
 } while(0)
 
@@ -42,7 +42,7 @@ void darray_grow(void *darrayAny, u32 target, u32 typeSize);
   while(_cap / 2 > (_da).len) _cap /= 2;\
   if(_cap < (_da).cap){\
     (_da).cap = _cap;\
-    (_da).data = REALLOC((_da).data, _cap * sizeof *(_da).data);\
+    (_da).data = darrayRealloc((_da).data, _cap * sizeof *(_da).data);\
   }\
 } while(0)
 

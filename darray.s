@@ -4,15 +4,15 @@
 
 .global darray_grow
 darray_grow:
-  push rbx
-  mov rbx, rcx
-  mov ecx, 12[rcx]
-  cmp ecx, edx
+  mov eax, 12[rcx]
+  cmp eax, edx
   jc .darray_grow.notEnough
-  mov rax, [rbx]
-  pop rbx
+  mov rax, [rcx]
   ret
   .darray_grow.notEnough:
+  push rbx
+  mov rbx, rcx
+  mov ecx, eax
   xor eax, eax
   test ecx, ecx
   setz al

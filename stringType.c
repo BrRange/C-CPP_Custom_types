@@ -26,13 +26,16 @@ StringView string_view(String *str){
 }
 
 void string_free(String *str){
-  free(str->data);
+  char *const data = str->data;
+  *str = (String){0};
+  free(data);
 }
 
 void string_destroy(String *str){
-  memset(str->data, 0, str->len);
-  free(str->data);
+  char *const data = str->data;
   *str = (String){0};
+  memset(data, 0, str->len);
+  free(data);
 }
 
 void string_set(String *str, const StringView view){

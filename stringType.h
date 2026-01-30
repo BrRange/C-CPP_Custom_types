@@ -23,6 +23,9 @@ StringView string_view(String *str);
 
 void string_free(String *str);
 
+/**
+ * @brief Frees the String object and clears the string buffer itself
+ */
 void string_destroy(String *str);
 
 void string_set(String *str, const StringView view);
