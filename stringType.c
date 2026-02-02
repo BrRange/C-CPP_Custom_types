@@ -3,9 +3,16 @@
 #include <string.h>
 #include "darray.h"
 
+void *(*stringRealloc)(void *mem, usz bytes) = realloc;
+
 String string_new(const StringView view){
   String str = {0};
-  darrayAppendMany(str, view.data, view.len);
+  str.len = view.len;
+  u32 cap = 2;
+  while(cap < str.len) cap += (cap >> 1) + ((cap >> 1) & 1);
+  str.cap = cap;
+  str.data = stringRealloc(str.data, cap);
+  memcpy(str.data, view.data, view.len);
   return str;
 }
 
@@ -40,11 +47,27 @@ void string_destroy(String *str){
 
 void string_set(String *str, const StringView view){
   str->len = 0;
-  darrayAppendMany(*str, view.data, view.len);
+  str->len += view.len;
+  u32 cap = str->cap;
+  cap += 2 * !cap;
+  while(cap < str->len) cap += (cap >> 1) + ((cap >> 1) & 1);
+  if(cap > str->cap){
+    str->cap = cap;
+    str->data = stringRealloc(str->data, cap);
+  }
+  memcpy(str->data, view.data, view.len);
 }
 
 void string_append(String *str, const StringView view){
-  darrayAppendMany(*str, view.data, view.len);
+  str->len += view.len;
+  u32 cap = str->cap;
+  cap += 2 * !cap;
+  while(cap < str->len) cap += (cap >> 1) + ((cap >> 1) & 1);
+  if(cap > str->cap){
+    str->cap = cap;
+    str->data = stringRealloc(str->data, cap);
+  }
+  memcpy(str->data, view.data, view.len);
 }
 
 u32 string_findAmount(const StringView view, char c){

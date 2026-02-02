@@ -30,7 +30,7 @@ string_grow:
   mov 12[rbx], ecx
   mov edx, ecx
   mov rcx, [rbx]
-  call realloc
+  call stringRealloc[rip]
   mov [rbx], rax
   add rsp, 32
   pop rbx
@@ -127,8 +127,6 @@ string_append:
   mov r8d, 8[rax]
   mov rdx, [rax]
   jmp memcpy
-  .string_append.return:
-  ret
 
 .global string_findAmount
 string_findAmount:
@@ -152,5 +150,100 @@ string_findAmount:
   pop rsi
   ret
 
-# .global string_findAll
-string_findAll: # u32* (const StringView, char, u32 *amount);
+.global string_findAll
+string_findAll:
+  push rbx
+  push rbp
+  sub rsp, 32
+  mov eax, 8[rcx]
+  test eax, eax
+  jz .string_findAll.noLen
+  mov rax, [rcx]
+  mov 56[rsp], rax
+  mov 64[rsp], edx
+  mov 72[rsp], r8
+  call string_findAmount
+  test eax, eax
+  jz .string_findAll.notFound
+  mov ebp, eax
+  mov rdx, 72[rsp]
+  test rdx, rdx
+  jz .string_findAll.noStore
+  mov [rdx], eax
+  .string_findAll.noStore:
+  mov ecx, eax
+  shl rcx, 2
+  call malloc
+  mov rcx, 56[rsp]
+  mov rbx, rax
+  mov edx, 64[rsp]
+  xor r8d, r8d
+  mov r9d, r8d
+  .string_findAll.next:
+  cmp [rcx+r8], dl
+  jnz .string_findAll.notThisOne
+  mov [rax], r8d
+  add rax, dword
+  add r9d, 1
+  .string_findAll.notThisOne:
+  add r8d, 1
+  cmp r9d, ebp
+  jc .string_findAll.next
+  mov rax, rbx
+  .string_findAll.noLen:
+  .string_findAll.notFound:
+  add rsp, 32
+  pop rbp
+  pop rbx
+  ret
+
+.global string_findDynamic
+string_findDynamic: # void (const StringView, char, void *darray_u32)
+  push rbx
+  push rbp
+  sub rsp, 32
+  mov eax, 8[rcx]
+  test eax, eax
+  jz .string_findDynamic.noLen
+  mov rax, [rcx]
+  mov 56[rsp], rax
+  mov 64[rsp], edx
+  mov rbx, r8
+  call string_findAmount
+  test eax, eax
+  jz .string_findDynamic.notFound
+  mov ebp, eax
+  mov rcx, rbx
+  mov edx, 8[rbx]
+  add edx, eax
+  mov r8d, dword
+  call darray_grow
+  mov rcx, 56[rsp]
+  mov edx, 8[rbx]
+  lea rax, [rax+rdx*dword]
+  mov edx, 64[rsp]
+  add 8[rbx], ebp
+  xor r8d, r8d
+  mov r9d, r8d
+  .string_findDynamic.next:
+  cmp [rcx+r8], dl
+  jnz .string_findDynamic.notThisOne
+  mov [rax], r8d
+  add rax, dword
+  add r9d, 1
+  .string_findDynamic.notThisOne:
+  add r8d, 1
+  cmp r9d, ebp
+  jc .string_findDynamic.next
+  .string_findDynamic.noLen:
+  .string_findDynamic.notFound:
+  add rsp, 32
+  pop rbp
+  pop rbx
+  ret
+
+.data
+
+.global stringRealloc
+stringRealloc:
+  .quad realloc

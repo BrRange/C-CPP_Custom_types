@@ -5,6 +5,8 @@
 
 #define stringView(_txt) ((StringView){.data = (_txt), .len = sizeof(_txt) - 1})
 
+extern void *(*stringRealloc)(void *mem, usz bytes);
+
 typedef struct String{
   char *data;
   u32 len, cap;
