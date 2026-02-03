@@ -1,6 +1,6 @@
 #include "darray.h"
 
-void *(*darrayRealloc)(void *mem, usz bytes) = realloc;
+void *(*darrayRealloc)(void *mem, usz bytes, usz previous) = (void *(*)(void*, usz, usz))realloc;
 
 void darray_grow(void *darrayAny, u32 target, u32 typeSize){
   darrayTemplate(void) *darray = darrayAny;
@@ -11,8 +11,8 @@ void darray_grow(void *darrayAny, u32 target, u32 typeSize){
     cap += incr + (incr & 1);
   }
   if(cap > darray->cap){
+    darray->data = darrayRealloc(darray->data, cap * typeSize, darray->cap * typeSize);
     darray->cap = cap;
-    darray->data = darrayRealloc(darray->data, cap * typeSize);
   }
 }
 
@@ -21,8 +21,8 @@ void darray_shrink(void *darrayAny, u32 typeSize){
   u32 cap = darray->cap;
   while(cap / 2 > darray->len) cap /= 2;
   if(cap < darray->cap){
+    darray->data = darrayRealloc(darray->data, cap * typeSize, darray->cap * typeSize);
     darray->cap = cap;
-    darray->data = darrayRealloc(darray->data, cap * typeSize);
   }
 }
 

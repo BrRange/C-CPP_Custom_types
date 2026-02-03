@@ -5,7 +5,7 @@
 #include <string.h>
 #include "rustydef.h"
 
-extern void *(*darrayRealloc)(void *mem, usz bytes);
+extern void *(*darrayRealloc)(void *mem, usz bytes, usz previous);
 
 /*
 Expected format:
@@ -30,8 +30,8 @@ Expected new data:
   while(_cap < (_target))\
     _cap += (_cap >> 1) + ((_cap >> 1) & 1);\
   if(_cap > (_da).cap){\
+    (_da).data = darrayRealloc((_da).data, _cap * sizeof *(_da).data, (_da).cap * sizeof *(_da).data);\
     (_da).cap = _cap;\
-    (_da).data = darrayRealloc((_da).data, _cap * sizeof *(_da).data);\
   }\
 } while(0)
 
@@ -41,8 +41,8 @@ void darray_grow(void *darrayAny, u32 target, u32 typeSize);
   u32 _cap = (_da).cap;\
   while(_cap / 2 > (_da).len) _cap /= 2;\
   if(_cap < (_da).cap){\
+    (_da).data = darrayRealloc((_da).data, _cap * sizeof *(_da).data, (_da).cap * sizeof *(_da).data);\
     (_da).cap = _cap;\
-    (_da).data = darrayRealloc((_da).data, _cap * sizeof *(_da).data);\
   }\
 } while(0)
 

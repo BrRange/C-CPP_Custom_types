@@ -151,7 +151,7 @@ string_findAmount:
   ret
 
 .global string_findAll
-string_findAll:
+string_findAll: # u32* (const StringView, char, u32 *amount)
   push rbx
   push rbp
   sub rsp, 32
@@ -245,5 +245,5 @@ string_findDynamic: # void (const StringView, char, void *darray_u32)
 .data
 
 .global stringRealloc
-stringRealloc:
+stringRealloc: # void* (*)(void*, usz)
   .quad realloc
