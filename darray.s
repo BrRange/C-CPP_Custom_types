@@ -29,7 +29,9 @@ darray_grow:
   .darray_grow.firstGrowPass:
   sub rsp, 32
   mov edx, r8d
+  mov r8d, 12[rbx]
   mov 12[rbx], ecx
+  imul r8, rdx
   imul rdx, rcx
   mov rcx, [rbx]
   call darrayRealloc[rip]
@@ -48,6 +50,7 @@ darray_shrink:
   mov rcx, rax
   shl ecx
   shr rax, 32
+  mov r8d, eax
   cmp eax, ecx
   jnc .darray_shrink.canShrink
   mov rax, [rbx]
@@ -110,6 +113,7 @@ darray_appendMany:
   lea edx, [rdx+r8]
   imul r8, r9
   push r8
+  mov r8d, r9d
   mov 8[rcx], edx
   mov rbx, rax
   call darray_grow
