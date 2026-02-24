@@ -92,7 +92,7 @@ void darray_removeMany(void *darrayAny, u32 index, u32 amount, u32 typeSize);
 
 #define darrayPop(_da, _index) do{\
   --(_da).len;\
-  if(index < (_da).len)\
+  if((_index) < (_da).len)\
     memcpy(\
       (_da).data + (_index),\
       (_da).data + (_da).len,\
@@ -127,6 +127,7 @@ void darray_destroy(void *darrayAny);
   for(typeof((_da).data)_ref = NULL; !_ref; _ref = (void*)1)\
   for(typeof(*(_da).data)_el; !_ref; _ref = (void*)1)\
   for(u32 _i = 0; (_ref = (_da).data + _i, _el = *_ref, _i < (_da).len); ++_i)
+
 
 
 #endif
