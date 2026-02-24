@@ -200,28 +200,6 @@ darray_popMany:
   .darray_popMany.noLeftover:
   ret
 
-.global darray_recFree
-darray_recFree:
-  mov edx, 8[rcx]
-  test edx, edx
-  jz .darray_recFree.noLen
-  push rbx
-  push rbp
-  sub rsp, 32
-  mov ebx, edx
-  mov rbp, [rcx]
-  .darray_recFree.iterate:
-  sub ebx, 1
-  mov rcx, [rbp+rbx*8]
-  call free
-  test ebx, ebx
-  jnz .darray_recFree.iterate
-  add rsp, 32
-  pop rbp
-  pop rbx
-  .darray_recFree.noLen:
-  ret
-
 .global darray_destroy
 darray_destroy:
   pxor xmm0, xmm0

@@ -123,13 +123,6 @@ void darray_popMany(void *darrayAny, u32 index, u32 amount, u32 typeSize);
 
 void darray_destroy(void *darrayAny);
 
-#define darrayRecFree(_da) do{\
-  for(u32 i = 0; i < (_da).len; ++i)\
-    free((_da).data[i]);\
-} while(0)
-
-void darray_recFree(void *darrayAny);
-
 #define darrayIterate(_da)\
   for(typeof((_da).data)_ref = NULL; !_ref; _ref = (void*)1)\
   for(typeof(*(_da).data)_el; !_ref; _ref = (void*)1)\

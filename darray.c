@@ -100,9 +100,3 @@ void darray_destroy(void *darrayAny){
   free(darray->data);
   memset(darray, 0, sizeof(*darray));
 }
-
-void darray_recFree(void *darrayAny){
-  darrayTemplate(void*) *darrayGenPtr = darrayAny;
-  for(u32 i = 0; i < darrayGenPtr->len; ++i)
-    free(darrayGenPtr->data[i]);
-}

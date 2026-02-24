@@ -207,7 +207,7 @@ DNode *dlist_find(DList *restrict dl, void *data, ListCompare cmp){
 }
 
 void dlist_free(DList *dl){
-  LNode *node = (LNode*)dl->root, *compute;
+  DNode *node = dl->root, *compute;
   dl->root = NULL;
   while(node){
     compute = node;
