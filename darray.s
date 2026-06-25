@@ -128,12 +128,11 @@ darray_remove:
   mov eax, 8[rcx]
   sub eax, 1
   mov 8[rcx], eax
-  cmp edx, eax
-  jnc .darray_remove.noLeftover
+  cmp eax, edx
+  jz .darray_remove.noLeftover
   mov rcx, [rcx]
-  sub eax, edx
   imul rdx, r8
-  lea rcx, [rcx+rdx]
+  add rcx, rdx
   lea rdx, [rcx+r8]
   imul r8, rax
   jmp memcpy
