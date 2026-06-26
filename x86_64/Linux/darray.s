@@ -63,7 +63,7 @@ darray_append: // rdi *darray, rsi *element, edx type -> void
   call darray_grow
   mov eax, 8[rbx]
   mov rdi, [rbx]
-  pop rdx
+  pop rcx
   pop rsi
   lea edx, 1[rax]
   mov 8[rbx], edx
@@ -71,6 +71,26 @@ darray_append: // rdi *darray, rsi *element, edx type -> void
   add rdi, rax
   pop rbx
   jmp  memcpy
+
+.global darray_appendPtr
+darray_appendPtr: // rdi *darray, rsi *element -> void
+  push rbx
+  sub rsp, 16
+  mov rbx, rdi
+  mov ecx, 8[rdi]
+  mov 8[rsp], rsi
+  mov [rsp], ecx
+  lea esi,1[rcx]
+  mov 8[rdi], esi
+  mov edx, 8
+  call darray_grow
+  mov ecx, [rsp]
+  mov rsi, 8[rsp]
+  mov rdi, [rbx]
+  mov [rcx*8+rdi], rsi
+  add rsp, 16
+  pop rbx
+  ret
 
 .global darray_appendMany
 darray_appendMany: // rdi *darray, rsi *element, edx amount, ecx type -> void
@@ -135,6 +155,40 @@ darray_removeMany: // rdi *darray, esi index, edx amount, ecx type -> void
   jmp memmove
   0:
   ret
+
+.global darray_pop
+darray_pop: // rdi *darray, esi index, edx type -> void
+  mov eax, 8[rdi]
+  sub eax, 1
+  mov 8[rdi], eax
+  cmp esi, eax
+  jz 0f
+  mov rcx, [rdi]
+  imul rax, rdx
+  imul rsi, rdx
+  lea rdi, [rcx+rsi]
+  lea rsi, [rax+rcx]
+  jmp memcpy
+  0:
+  ret
+
+.global darray_popMany
+darray_popMany: // rdi *darray, esi index, edx amount, ecx type -> void
+  ret
+
+.global darray_destroy
+darray_destroy: // rdi *darray, esi type -> void
+  push rbx
+  mov rbx, rdi
+  mov ecx, 12[rdi]
+  imul ecx, esi
+  xor esi, esi
+  mov rdi, [rdi]
+  call memset
+  pxor xmm0, xmm0
+  movups [rbx], xmm0
+  pop rbx
+  jmp free
 
 .data
 
