@@ -12,7 +12,8 @@ darray_grow: // rdi *darray, esi len, edx type -> void
   0:
   lea ecx, 1[rax]
   shr ecx
-  lea eax, 1[rax+rcx]
+  lea eax, 2[rax+rcx]
+  and eax, -2
   cmp eax, esi
   jb 0b
   mov 12[rbx], eax
@@ -106,7 +107,7 @@ darray_appendMany: // rdi *darray, rsi *element, edx amount, ecx type -> void
   mov rdi, [rbx]
   pop rcx
   mov edx, ecx
-  lea esi, [rdx+rax]
+  lea esi, [rax+rdx]
   mov 8[rbx], esi
   shr rcx, 32
   imul eax, ecx
@@ -121,8 +122,8 @@ darray_remove: // rdi *darray, esi index, edx type -> void
   mov ecx, 8[rdi]
   sub ecx, 1
   mov 8[rdi], ecx
-  cmp ecx, esi
-  jz 0f
+  cmp esi, ecx
+  jae 0f
   mov rdi, [rdi]
   imul rsi, rdx
   imul rcx, rdx
@@ -140,8 +141,8 @@ darray_removeMany: // rdi *darray, esi index, edx amount, ecx type -> void
   mov ecx, 8[rdi]
   sub ecx, edx
   mov 8[rdi], ecx
-  cmp ecx, esi
-  jz 0f
+  cmp esi, ecx
+  jae 0f
   add ecx, edx
   imul rdx, rax
   imul rsi, rax
@@ -162,7 +163,7 @@ darray_pop: // rdi *darray, esi index, edx type -> void
   sub eax, 1
   mov 8[rdi], eax
   cmp esi, eax
-  jz 0f
+  jae 0f
   mov rcx, [rdi]
   imul rax, rdx
   imul rsi, rdx
@@ -174,6 +175,27 @@ darray_pop: // rdi *darray, esi index, edx type -> void
 
 .global darray_popMany
 darray_popMany: // rdi *darray, esi index, edx amount, ecx type -> void
+  mov eax, 8[rdi]
+  sub eax, edx
+  mov 8[rdi], eax
+  cmp esi, eax
+  jae 0f
+  push rbx
+  imul rax, rcx
+  imul rsi, rcx
+  imul rdx, rcx
+  xor ebx, ebx
+  lea rcx, [rdx+rsi]
+  sub rcx, rax
+  cmovc rcx, rbx
+  mov rbx, [rdi]
+  add rax, rcx
+  lea rdi, [rbx+rsi]
+  lea rsi, [rax+rbx]
+  sub rdx, rcx
+  pop rbx
+  jmp memmove
+  0:
   ret
 
 .global darray_destroy
@@ -188,6 +210,7 @@ darray_destroy: // rdi *darray, esi type -> void
   pxor xmm0, xmm0
   movups [rbx], xmm0
   pop rbx
+  mov rdi, rax
   jmp free
 
 .data
@@ -197,4 +220,3 @@ darrayRealloc:
   .quad realloc
 
 .section .note.GNU-stack,"",@progbits
-
