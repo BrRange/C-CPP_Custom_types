@@ -11,10 +11,10 @@ string_new: // rdi data, esi len -> rax data, rdx [len, cap]
   mov ebp, esi
   xor edi, edi
   0:
-  add edi, 1
-  mov ecx, edi
+  lea ecx, 1[rdi]
   shr ecx, 1
-  add edi, ecx
+  lea edi, 2[rdi+rcx]
+  and edi, -2
   cmp edi, esi
   jc 0b
   mov [rsp], edi
@@ -53,10 +53,10 @@ string_reserve: // rdi *str, esi cap -> void
   cmp edx, esi
   jae 1f
   0:
-  add edx, 1
-  mov ecx, edx
+  lea ecx, 1[rdi]
   shr ecx, 1
-  add edx, ecx
+  lea edi, 2[rdi+rcx]
+  and edi, -2
   cmp edx, esi
   jc 0b
   mov 12[rdi], edx
@@ -127,6 +127,18 @@ string_compare: // rdi base.data, rsi base.len, rdx target.data, rcx target.len 
   mov rsi, rdx
   mov edx, ecx
   jmp memcmp
+
+.global string_findDynamic
+string_findDynamic: // rdi *data, esi len, dl char, rcx *darray -> eax
+  push rbx
+  push rbp
+  movzx edx, dl
+  push rdx
+  mov rbx, rdi
+  mov rbp, rcx
+  add rsp, 8
+  pop rbp
+  pop rbx
 
 .data
 

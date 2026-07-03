@@ -2,6 +2,14 @@
 
 .text
 
+darray_overflowSave:
+  xor eax, eax
+  mov 12[rbx], eax
+  mov rdi, rbx
+  mov edx, esi
+  mov esi, 8[rbx]
+  pop rbx
+
 .global darray_grow
 darray_grow: // rdi *darray, esi len, edx type -> void
   mov eax, 12[rdi]
@@ -18,8 +26,8 @@ darray_grow: // rdi *darray, esi len, edx type -> void
   jb 0b
   mov 12[rbx], eax
   mov rdi, [rbx]
-  imul edx
-  mov esi, eax
+  imul rdx
+  mov rsi, rax
   call darrayRealloc[rip]
   mov [rbx], rax
   pop rbx
@@ -29,27 +37,33 @@ darray_grow: // rdi *darray, esi len, edx type -> void
 .global darray_shrink
 darray_shrink: // rdi *darray, esi type -> void
   push rbx
+  mov ecx, 0xaaaaaaab
   mov rbx, rdi
   mov rdi, 8[rbx]
   mov edx, edi
   shr rdi, 32
   mov eax, edi
-  shr edi
-  sub edi, 1
+  shl edi
+  jo darray_overflowSave
+  imul rdi, rcx
+  shr rdi, 33
+  and edi, -2
   cmp edx, edi
-  ja 1f
+  jae 1f
   0:
   mov eax, edi
-  shr edi
-  sub edi, 1
+  shl edi
+  imul rdi, rcx
+  shr rdi, 33
+  and edi, -2
   cmp edx, edi
   jb 0b
+  1:
   mov 12[rbx], eax
-  imul esi, eax
+  imul rsi, rax
   mov rdi, [rbx]
   call darrayRealloc[rip]
   mov [rbx], rax
-  1:
   pop rbx
   ret
 
