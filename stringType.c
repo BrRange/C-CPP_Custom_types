@@ -1,5 +1,6 @@
 #include "stringType.h"
 
+#include <stdlib.h>
 #include <string.h>
 #include "darray.h"
 
@@ -86,13 +87,12 @@ u32 *string_findAll(const StringView view, char c, u32 *amount){
   return list;
 }
 
-void string_findDynamic(const StringView view, char c, void *darray_u32){
-  darrayTemplate(u32) *darray = darray_u32;
+void string_findDynamic(const StringView view, char c, DArray *darray){
   u32 found = string_findAmount(view, c), cur = 0;
   darrayGrow(*darray, darray->len + found);
   for(u32 i = 0; cur < found; ++i)
     if(view.data[i] == c){
-      darrayAppend(*darray, i);
+      darray_append(darray, &i);
       ++cur;
     }
 }
@@ -121,40 +121,39 @@ u32 string_contains(const StringView view, const StringView sub){
   return -1u;
 }
 
-void string_split(StringView view, const StringView delimiter, void *darray_String){
-  darrayTemplate(String) *darray = darray_String;
+void string_split(StringView view, const StringView delimiter, DArray *darray){
   u32 index = string_contains(view, delimiter);
   while(index + 1){
     String newEl = string_new(string_newView(view.data, index));
-    darrayAppend(*darray, newEl);
+    darray_append(darray, &newEl);
     view.data += index + delimiter.len;
     view.len -= index + delimiter.len;
     index = string_contains(view, delimiter);
   }
-  darrayAppend(*darray, string_new(view));
+  String str = string_new(view);
+  darray_append(darray, &str);
 }
 
-void string_splitView(StringView view, const StringView delimiter, void *darray_StringView){
-  darrayTemplate(StringView) *darray = darray_StringView;
+void string_splitView(StringView view, const StringView delimiter, DArray *darray){
   u32 index = string_contains(view, delimiter);
   while(index + 1){
     StringView newEl = string_newView(view.data, index);
-    darrayAppend(*darray, newEl);
+    darray_append(darray, &newEl);
     view.data += index + delimiter.len;
     view.len -= index + delimiter.len;
     index = string_contains(view, delimiter);
   }
-  darrayAppend(*darray, view);
+  darray_append(darray, &view);
 }
 
 String string_join(String *list, u32 len, const StringView join){
   String joined = {0};
   if(!len) return joined;
   for(u32 i = 0; i < len - 1; ++i){
-    darrayAppendMany(joined, list[i].data, list[i].len);
-    darrayAppendMany(joined, join.data, join.len);
+    string_append(&joined, string_view(list + i));
+    string_append(&joined, join);
   }
-  darrayAppendMany(joined, list[len - 1].data, list[len - 1].len);
+  string_append(&joined, string_view(list + (len - 1)));
   return joined;
 }
 
@@ -162,10 +161,10 @@ String string_joinView(StringView *list, u32 len, const StringView join){
   String joined = {0};
   if(!len) return joined;
   for(u32 i = 0; i < len - 1; ++i){
-    darrayAppendMany(joined, list[i].data, list[i].len);
-    darrayAppendMany(joined, join.data, join.len);
+    string_append(&joined, list[i]);
+    string_append(&joined, join);
   }
-  darrayAppendMany(joined, list[len - 1].data, list[len - 1].len);
+  string_append(&joined, list[len - 1]);
   return joined;
 }
 
