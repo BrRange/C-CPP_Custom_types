@@ -49,17 +49,17 @@ void matFill(Mat mat, i32 *arr, u32 len);
 
 void matRandomize(Mat mat);
 
-void matAdd(Mat dst, Mat val);
+void matAdd(Mat dest, Mat val);
 
-void subMat(Mat dst, Mat val);
+void subMat(Mat dest, Mat val);
 
-void matScale(Mat dst, float val);
+void matScale(Mat dest, float val);
 
 void matCopy(Mat dest, Mat src);
 
-void matTranspose(Mat src, Mat dst);
+void matTranspose(Mat dest, Mat src);
 
-void matReduce(Mat src, Mat dst, u32 x, u32 y);
+void matReduce(Mat dest, Mat src, u32 x, u32 y);
 
 float matDeterminant(Mat mat);
 
