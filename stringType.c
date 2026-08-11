@@ -60,15 +60,17 @@ void string_set(String *str, const StringView view){
 }
 
 void string_append(String *str, const StringView view){
+  u32 len = str->len, cap = str->cap;
   str->len += view.len;
-  u32 cap = str->cap;
-  cap += 2 * !cap;
-  while(cap < str->len) cap += (cap >> 1) + ((cap >> 1) & 1);
+  while(cap < str->len){
+    u32 incr = (cap + 1) >> 1;
+    cap = (cap + incr + 2) & -2u;
+  }
   if(cap > str->cap){
     str->cap = cap;
     str->data = stringRealloc(str->data, cap);
   }
-  memcpy(str->data, view.data, view.len);
+  memcpy(str->data + len, view.data, view.len);
 }
 
 u32 string_findAmount(const StringView view, char c){
@@ -89,7 +91,7 @@ u32 *string_findAll(const StringView view, char c, u32 *amount){
 
 void string_findDynamic(const StringView view, char c, DArray *darray){
   u32 found = string_findAmount(view, c), cur = 0;
-  darrayGrow(*darray, darray->len + found);
+  darray_grow(darray, darray->len + found);
   for(u32 i = 0; cur < found; ++i)
     if(view.data[i] == c){
       darray_append(darray, &i);

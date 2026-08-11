@@ -3,6 +3,8 @@
 
 #include "rustydef.h"
 
+typedef struct DArray DArray;
+
 #define stringView(_txt) ((StringView){.data = (_txt), .len = sizeof(_txt) - 1})
 
 extern void *(*stringRealloc)(void *mem, usz bytes);
@@ -42,7 +44,7 @@ u32 *string_findAll(const StringView view, char c, u32 *amount);
  * @brief Appends the indexes in a dynamic array of type u32
  * @param darray_u32 Expected to point at a valid darray of u32
  */
-void string_findDynamic(const StringView view, char c, void *darray_u32);
+void string_findDynamic(const StringView view, char c, DArray *darray_u32);
 
 u32 string_findFirst(const StringView view, char c);
 
@@ -56,7 +58,7 @@ u32 string_contains(const StringView view, const StringView sub);
  * @param delimiter Delimiter used to split the source string
  * @param darray_String Expected to point at a valid darray of String
  */
-void string_split(StringView view, const StringView delimiter, void *darray_String);
+void string_split(StringView view, const StringView delimiter, DArray *darray_String);
 
 /**
  * @brief Splits a string into a dynamic array based on a delimiter
@@ -64,7 +66,7 @@ void string_split(StringView view, const StringView delimiter, void *darray_Stri
  * @param delimiter Delimiter used to split the source string
  * @param darray_StringView Expected to point at a valid darray of StringView
  */
-void string_splitView(StringView view, const StringView delimiter, void *darray_StringView);
+void string_splitView(StringView view, const StringView delimiter, DArray *darray_StringView);
 
 String string_join(String *list, u32 len, const StringView join);
 

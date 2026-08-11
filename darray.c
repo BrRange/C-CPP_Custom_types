@@ -11,10 +11,9 @@ DArray darray_new(u32 type){
 
 void darray_grow(DArray *darray, u32 target){
   u32 cap = darray->cap;
-  cap += 2 * !cap;
   while(cap < target){
-    u32 incr = cap >> 1;
-    cap += incr + (incr & 1);
+    u32 incr = (cap + 1) >> 1;
+    cap = (cap + incr + 2) & -2u;
   }
   if(cap > darray->cap){
     darray->data = darrayRealloc(darray->data, cap * darray->type);

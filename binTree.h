@@ -2,7 +2,7 @@
 #define BINARY_TREE_H_
 
 #include <stdlib.h>
-#include "pool.h"
+#include "rustydef.h"
 
 typedef struct Node Node;
 struct Node{
@@ -12,6 +12,11 @@ struct Node{
 };
 
 typedef int BinTree_Compare(const void *, const void *);
+
+/* Implement this later */
+typedef void PoolLink;
+/* Implement this later */
+
 
 typedef struct BinTree{
   PoolLink *pool;
